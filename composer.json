@@ -1,0 +1,12 @@
+{
+    "name": "silent/tree",
+    "description": "data format tree",
+    "type": "library",
+    "require": {
+        "php": ">=7.1"
+    },
+    "psr-4": {
+        "EasyTree\\": "src/"
+    },
+    "license": "MIT"
+}
