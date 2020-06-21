@@ -4,6 +4,8 @@
 namespace EasyTree\Tree;
 
 
+use EasyTree\TreeNode\TreeNode;
+
 trait TreeField
 {
     /**
@@ -29,6 +31,31 @@ trait TreeField
      * @var string
      */
     private $childKey = 'children';
+
+    /**
+     * 子集个数字段名
+     * @var string
+     */
+    private $countSubsetKey = 'subset';
+
+
+    public function getIterable(?array $tree = null): iterable
+    {
+        if ($tree === null) {
+            $tree = $this->tree;
+        }
+
+        foreach ($tree as $node) {
+            yield $node ;
+
+            if (isset($node[$this->childKey])) {
+                foreach ($this->getIterable($node[$this->childKey]) as $childrenNode) {
+                    yield $childrenNode;
+                }
+            }
+        }
+    }
+
 
     /**
      * @param string $uniquelyKey
@@ -67,6 +94,16 @@ trait TreeField
     private function setTree(array $tree)
     {
         $this->tree = $tree;
+        return $this;
+    }
+
+    /**
+     * @param string $countSubsetKey
+     * @return TreeField
+     */
+    public function setCountSubsetKey(string $countSubsetKey): TreeField
+    {
+        $this->countSubsetKey = $countSubsetKey;
         return $this;
     }
 }
