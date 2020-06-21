@@ -6,15 +6,22 @@ namespace EasyTree\TreeNode;
 
 class TreeNode
 {
-    private $nodeHeight = 1;
+    public $nodeHeight = 1;
 
-    private $data;
+    public $data;
 
-    private $childrenDepth;
+    public $childrenDepth;
 
-    public function __construct(array $data, int $nodeHeight)
+    /**
+     * 子集
+     * @var array
+     */
+    public $children = [];
+
+    public function __construct(array $data, int $nodeHeight, array $children = [])
     {
         $this->data = $data;
         $this->nodeHeight = $nodeHeight;
+        $this->children = $children;
     }
 }

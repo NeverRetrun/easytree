@@ -9,10 +9,16 @@ use EasyTree\TreeNode\TreeNode;
 trait TreeField
 {
     /**
-     * 树形数据
+     * 树形数据 array<array>
      * @var array
      */
     private $tree;
+
+    /**
+     * 树形数据 array<TreeNode>
+     * @var array
+     */
+    public $nodeTree;
 
     /**
      * 每条数据唯一标识id名
@@ -38,6 +44,33 @@ trait TreeField
      */
     private $countSubsetKey = 'subset';
 
+    /**
+     * 生成节点对象的树 用于搜索
+     * @param array|null $tree
+     * @param TreeNode|null $treeNode
+     * @return void
+     */
+    private function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null): void
+    {
+
+        if ($tree === null) {
+            $tree = $this->tree;
+        }
+
+        foreach ($tree as $node) {
+            if (null === $treeNode) {
+                $nodeObject       = new TreeNode($node, 1);
+                $this->nodeTree[] = $nodeObject;
+            } else {
+                $nodeObject           = new TreeNode($node, $treeNode->nodeHeight + 1);
+                $treeNode->children[] = $nodeObject;
+            }
+
+            if (isset($node[$this->childKey])) {
+                $this->setNodeTree($node[$this->childKey], $nodeObject);
+            }
+        }
+    }
 
     public function getIterable(?array $tree = null): iterable
     {
@@ -46,7 +79,7 @@ trait TreeField
         }
 
         foreach ($tree as $node) {
-            yield $node ;
+            yield $node;
 
             if (isset($node[$this->childKey])) {
                 foreach ($this->getIterable($node[$this->childKey]) as $childrenNode) {
