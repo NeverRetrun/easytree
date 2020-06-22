@@ -81,8 +81,14 @@ trait TreeField
         foreach ($tree as $node) {
             yield $node;
 
-            if (isset($node[$this->childKey])) {
+            if (is_array($node) && isset($node[$this->childKey])) {
                 foreach ($this->getIterable($node[$this->childKey]) as $childrenNode) {
+                    yield $childrenNode;
+                }
+            }
+
+            if ($node instanceof TreeNode && count($node->children) > 0) {
+                foreach ($this->getIterable($node->children) as $childrenNode) {
                     yield $childrenNode;
                 }
             }

@@ -9,7 +9,7 @@ use EasyTree\TreeNode\TreeNode;
 
 class Tree implements TreeInterface
 {
-    use TreeField;
+    use TreeSearcher;
 
     /**
      * @var array 原数据

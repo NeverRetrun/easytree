@@ -24,4 +24,5 @@ class TreeNode
         $this->nodeHeight = $nodeHeight;
         $this->children = $children;
     }
+
 }

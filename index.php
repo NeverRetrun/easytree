@@ -16,7 +16,6 @@ $tree = (new \EasyTree\Tree\Tree($test))
     ->setUniquelyKey('id')
     ->generate(false);
 
-foreach ($tree->getIterable() as $node) {
-    var_dump($node);
-}
+//var_dump($tree->searchNode('name', '面条'));
+var_dump($tree->searchNodePath('id', 5));
 

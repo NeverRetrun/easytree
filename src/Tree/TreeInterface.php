@@ -7,6 +7,31 @@ use EasyTree\TreeNode\TreeNode;
 interface TreeInterface
 {
     /**
+     * 根据路径搜索 类似 ['营销中心', '总部', '设计部'] 搜索出一众的node
+     * @return array
+     */
+    public function searchNodes(): array;
+
+    /**
+     * 搜索的过程记录搜索路径上的node
+     * @param string $key
+     * @param $value
+     * @param array|null $tree
+     * @param array $path
+     * @return array
+     */
+    public function searchNodePath(string $key, $value, ?array $tree = null, array $path = []): array;
+
+    /**
+     * 搜索只搜索一个node值
+     * @param string $key
+     * @param $value
+     * @param array|null $tree
+     * @return TreeNode
+     */
+    public function searchNode(string $key, $value, ?array $tree = null): TreeNode;
+
+    /**
      * 遍历树
      * @param array|null $tree
      * @return iterable
