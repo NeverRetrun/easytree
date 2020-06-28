@@ -5,7 +5,6 @@ namespace EasyTree\Tree;
 
 
 use EasyTree\Exception\NotFoundUniquelyKey;
-use EasyTree\TreeNode\TreeNode;
 
 class Tree implements TreeInterface
 {

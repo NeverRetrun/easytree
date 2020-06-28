@@ -12,11 +12,35 @@ trait TreeSearcher
     use TreeField;
 
     /**
+     * 根据路径搜索 类似 ['营销中心', '总部', '设计部'] 搜索出一众的node
+     * @param string $key
+     * @param array $values
+     * @param array|null $tree
+     * @return array
+     */
+    public function searchNodes(string $key, array $values, ?array $tree = null): array
+    {
+        $result = [];
+        foreach ($values as $value) {
+            $node = $this->searchNode($key, $value, $tree);
+
+            $tree = $node->toTree()
+                ->setNodeTree()
+                ->getNodeTree();
+
+            $result[] = $node->data;
+        }
+
+        return $result;
+    }
+
+    /**
      * 比较某个key的值来搜索节点
      * @param string $key
      * @param $value
      * @param array|null $tree
      * @return TreeNode
+     * @throws NotFoundNode
      */
     public function searchNode(string $key, $value, ?array $tree = null): TreeNode
     {
@@ -90,11 +114,5 @@ trait TreeSearcher
         }
 
         throw new NotFoundNode();
-    }
-
-
-    public function searchNodes(): array
-    {
-        
     }
 }

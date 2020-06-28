@@ -16,6 +16,12 @@ $tree = (new \EasyTree\Tree\Tree($test))
     ->setUniquelyKey('id')
     ->generate(false);
 
-//var_dump($tree->searchNode('name', '面条'));
-var_dump($tree->searchNodePath('id', 5));
+//var_dump($tree->searchNodes('name', ['食物', '饮料' ,'矿泉水']));
+
+var_dump(
+    $tree->searchNode('id', 1)
+        ->setMaxChildrenHeight()
+        ->maxChildrenHeight
+);
+//var_dump();
 

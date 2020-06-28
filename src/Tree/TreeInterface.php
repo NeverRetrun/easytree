@@ -2,15 +2,20 @@
 
 namespace EasyTree\Tree;
 
+use EasyTree\Exception\NotFoundNode;
 use EasyTree\TreeNode\TreeNode;
 
 interface TreeInterface
 {
     /**
      * 根据路径搜索 类似 ['营销中心', '总部', '设计部'] 搜索出一众的node
+     * @param string $key
+     * @param array $values
+     * @param array|null $tree
      * @return array
+     * @throws NotFoundNode
      */
-    public function searchNodes(): array;
+    public function searchNodes(string $key, array $values, ?array $tree = null): array;
 
     /**
      * 搜索的过程记录搜索路径上的node
@@ -19,6 +24,7 @@ interface TreeInterface
      * @param array|null $tree
      * @param array $path
      * @return array
+     * @throws NotFoundNode
      */
     public function searchNodePath(string $key, $value, ?array $tree = null, array $path = []): array;
 
@@ -28,6 +34,7 @@ interface TreeInterface
      * @param $value
      * @param array|null $tree
      * @return TreeNode
+     * @throws NotFoundNode
      */
     public function searchNode(string $key, $value, ?array $tree = null): TreeNode;
 
@@ -68,4 +75,18 @@ interface TreeInterface
      * @return TreeInterface
      */
     public static function from(array $tree): TreeInterface;
+
+    /**
+     * 设置节点树
+     * @param array|null $tree
+     * @param TreeNode|null $treeNode
+     * @return TreeInterface
+     */
+    public function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null): TreeInterface;
+
+    /**
+     * 获取节点树
+     * @return array
+     */
+    public function getNodeTree(): array;
 }

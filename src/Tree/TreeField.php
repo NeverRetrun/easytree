@@ -48,11 +48,10 @@ trait TreeField
      * 生成节点对象的树 用于搜索
      * @param array|null $tree
      * @param TreeNode|null $treeNode
-     * @return void
+     * @return $this
      */
-    private function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null): void
+    public function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null): TreeInterface
     {
-
         if ($tree === null) {
             $tree = $this->tree;
         }
@@ -70,6 +69,8 @@ trait TreeField
                 $this->setNodeTree($node[$this->childKey], $nodeObject);
             }
         }
+
+        return $this;
     }
 
     public function getIterable(?array $tree = null): iterable
@@ -144,5 +145,13 @@ trait TreeField
     {
         $this->countSubsetKey = $countSubsetKey;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNodeTree(): array
+    {
+        return $this->nodeTree;
     }
 }
