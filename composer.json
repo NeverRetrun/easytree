@@ -1,6 +1,11 @@
 {
-  "name": "silent/tree",
-  "description": "data format tree",
+  "name": "silent/easytree",
+  "description": "将行数据格式化成树结构",
+  "keywords": [
+    "tree",
+    "easy",
+    "extension"
+  ],
   "type": "library",
   "require": {
     "php": ">=7.1",
