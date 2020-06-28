@@ -18,10 +18,11 @@ $tree = (new \EasyTree\Tree\Tree($test))
 
 //var_dump($tree->searchNodes('name', ['食物', '饮料' ,'矿泉水']));
 
-var_dump(
-    $tree->searchNode('id', 1)
-        ->setMaxChildrenHeight()
-        ->maxChildrenHeight
-);
-//var_dump();
+//var_dump(
+//    $tree->searchNode('id', 1)
+//        ->setMaxChildrenHeight()
+//        ->maxChildrenHeight
+//);
+
+//var_dump($tree->appendSubsetCount()->toRow());
 

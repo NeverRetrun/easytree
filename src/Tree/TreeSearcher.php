@@ -28,7 +28,7 @@ trait TreeSearcher
                 ->setNodeTree()
                 ->getNodeTree();
 
-            $result[] = $node->data;
+            $result[] = $node;
         }
 
         return $result;

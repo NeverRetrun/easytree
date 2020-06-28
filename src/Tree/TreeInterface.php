@@ -12,7 +12,7 @@ interface TreeInterface
      * @param string $key
      * @param array $values
      * @param array|null $tree
-     * @return array
+     * @return array <TreeNode>
      * @throws NotFoundNode
      */
     public function searchNodes(string $key, array $values, ?array $tree = null): array;
@@ -23,7 +23,7 @@ interface TreeInterface
      * @param $value
      * @param array|null $tree
      * @param array $path
-     * @return array
+     * @return array <TreeNode>
      * @throws NotFoundNode
      */
     public function searchNodePath(string $key, $value, ?array $tree = null, array $path = []): array;

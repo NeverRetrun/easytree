@@ -3,7 +3,8 @@
   "description": "data format tree",
   "type": "library",
   "require": {
-    "php": ">=7.1"
+    "php": ">=7.1",
+    "ext-json": "*"
   },
   "autoload": {
     "psr-4": {
