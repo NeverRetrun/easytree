@@ -25,7 +25,7 @@ $ composer require cvoid/easytree -vvv
 
 ---
 
-1. 基本由普通的行结构转成树结构
+* 基本由普通的行结构转成树结构
 
 ```php
 <?php
@@ -83,7 +83,7 @@ Array
 
 ```
 
-2. 你也可以选择返回带有子集个数的树数组结构
+* 你也可以选择返回带有子集个数的树数组结构
 
 ```php
 <?php
@@ -129,7 +129,7 @@ Array
 )
 ```
 
-3. 你可以进行搜索节点，这里提供了3种搜索方式
+* 你可以进行搜索节点，这里提供了3种搜索方式
 
    * 搜索单个节点
 
@@ -198,7 +198,20 @@ Array
      #这里会返回 [矿泉水TreeNode对象, 饮料TreeNode对象, 食品TreeNode对象]
      ```
 
-     
+* 你可以有个轻松的方式来循环树。`getIterable`方法将会返回一个迭代器。
+
+   ```php
+   <?php
+   $tree = (new EasyTree\Tree\Tree($foo))
+       ->setUniquelyKey('id')
+       ->generate();
+   
+   foreach ($tree->getIterable() as $node) {
+       var_dump($node);
+   }
+   ```
+
+   
 
 
 
