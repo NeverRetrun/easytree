@@ -33,11 +33,15 @@ class TreeNode
      */
     public $children = [];
 
-    public function __construct(array $data, int $nodeHeight, array $children = [])
+
+    private $uniquelyKey;
+
+    public function __construct(array $data, int $nodeHeight, string $uniquelyKey, array $children = [])
     {
         $this->data       = $data;
         $this->nodeHeight = $nodeHeight;
         $this->children   = $children;
+        $this->uniquelyKey = $uniquelyKey;
     }
 
     /**
@@ -67,12 +71,18 @@ class TreeNode
         return isset($node) ? $node->nodeHeight : $this->nodeHeight;
     }
 
+
+    public function getUniquelyKeyData()
+    {
+        return $this->data[$this->uniquelyKey];
+    }
+
     /**
      *
      * @return TreeInterface
      */
     public function toTree(): TreeInterface
     {
-        return Tree::from([$this->data]);
+        return Tree::from([$this->data], $this->uniquelyKey);
     }
 }

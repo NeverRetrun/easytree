@@ -16,13 +16,26 @@ final class TreeNodeTest extends TestCase
         ]
     ];
 
+    public function testGetUniquelyKeyData()
+    {
+        $this->assertEquals(
+            4,
+            (new \EasyTree\TreeNode\TreeNode(
+                $this->foo,
+                1,
+                'id'
+            ))->getUniquelyKeyData()
+        );
+    }
+
     public function testCountMaxChildrenHeight()
     {
         $node = new \EasyTree\TreeNode\TreeNode(
             $this->foo,
             1,
+            'id',
             [
-                new EasyTree\TreeNode\TreeNode($this->foo['children'][0], 2, [])
+                new EasyTree\TreeNode\TreeNode($this->foo['children'][0], 2, 'id', [])
             ]
         );
 
@@ -39,8 +52,9 @@ final class TreeNodeTest extends TestCase
         $tree = (new \EasyTree\TreeNode\TreeNode(
             $this->foo,
             1,
+            'id',
             [
-                new EasyTree\TreeNode\TreeNode($this->foo['children'][0], 2, [])
+                new EasyTree\TreeNode\TreeNode($this->foo['children'][0], 2, 'id', [])
             ]
         ))->toTree();
 

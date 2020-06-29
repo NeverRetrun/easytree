@@ -58,10 +58,10 @@ trait TreeField
 
         foreach ($tree as $node) {
             if (null === $treeNode) {
-                $nodeObject       = new TreeNode($node, 1);
+                $nodeObject       = new TreeNode($node, 1, $this->uniquelyKey);
                 $this->nodeTree[] = $nodeObject;
             } else {
-                $nodeObject           = new TreeNode($node, $treeNode->nodeHeight + 1);
+                $nodeObject           = new TreeNode($node, $treeNode->nodeHeight + 1, $this->uniquelyKey);
                 $treeNode->children[] = $nodeObject;
             }
 

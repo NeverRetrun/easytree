@@ -112,7 +112,7 @@ final class TreeTest extends TestCase
     {
         $this->assertInstanceOf(
             \EasyTree\Tree\TreeInterface::class,
-            Tree::from($this->fooTree)
+            Tree::from($this->fooTree, 'id')
         );
     }
 
