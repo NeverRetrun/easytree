@@ -5,7 +5,6 @@ namespace EasyTree\TreeNode;
 
 
 use EasyTree\Tree\Tree;
-use EasyTree\Tree\TreeInterface;
 
 class TreeNode
 {
@@ -78,10 +77,9 @@ class TreeNode
     }
 
     /**
-     *
-     * @return TreeInterface
+     * @return Tree
      */
-    public function toTree(): TreeInterface
+    public function toTree(): Tree
     {
         return Tree::from([$this->data], $this->uniquelyKey);
     }

@@ -50,7 +50,7 @@ trait TreeField
      * @param TreeNode|null $treeNode
      * @return $this
      */
-    public function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null): TreeInterface
+    public function setNodeTree(?array $tree = null, ?TreeNode $treeNode = null)
     {
         if ($tree === null) {
             $tree = $this->tree;

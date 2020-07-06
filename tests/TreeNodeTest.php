@@ -59,7 +59,7 @@ final class TreeNodeTest extends TestCase
         ))->toTree();
 
         $this->assertInstanceOf(
-            \EasyTree\Tree\TreeInterface::class,
+            \EasyTree\Tree\Tree::class,
             $tree
         );
     }

@@ -7,7 +7,7 @@ namespace EasyTree\Tree;
 use EasyTree\Adapter\Container;
 use EasyTree\Exception\NotFoundUniquelyKey;
 
-class Tree implements TreeInterface
+class Tree
 {
     use TreeSearcher;
 
@@ -31,9 +31,9 @@ class Tree implements TreeInterface
      * 数组树 to 对象
      * @param array $tree
      * @param string $uniquelyKey
-     * @return TreeInterface
+     * @return Tree
      */
-    public static function from(array $tree, string $uniquelyKey): TreeInterface
+    public static function from(array $tree, string $uniquelyKey): Tree
     {
         return (new self($tree))
             ->setTree($tree)
@@ -43,9 +43,9 @@ class Tree implements TreeInterface
     /**
      * 生成树
      * @param bool $isSaveParentId
-     * @return TreeInterface
+     * @return Tree
      */
-    public function generate(bool $isSaveParentId = false): TreeInterface
+    public function generate(bool $isSaveParentId = false): Tree
     {
         if (null === $this->uniquelyKey){
             throw new NotFoundUniquelyKey();
@@ -89,9 +89,9 @@ class Tree implements TreeInterface
     /**
      * 追加计算子集个数字段
      * @param array|null $tree
-     * @return TreeInterface
+     * @return Tree
      */
-    public function appendSubsetCount(?array &$tree = null): TreeInterface
+    public function appendSubsetCount(?array &$tree = null): Tree
     {
         if (null === $tree) {
             $tree =& $this->tree;
