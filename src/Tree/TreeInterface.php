@@ -72,9 +72,10 @@ interface TreeInterface
     /**
      * 从树数组生成树对象
      * @param array $tree
+     * @param string $uniquelyKey
      * @return TreeInterface
      */
-    public static function from(array $tree): TreeInterface;
+    public static function from(array $tree, string $uniquelyKey): TreeInterface;
 
     /**
      * 设置节点树

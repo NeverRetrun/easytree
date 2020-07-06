@@ -30,12 +30,14 @@ class Tree implements TreeInterface
     /**
      * 数组树 to 对象
      * @param array $tree
+     * @param string $uniquelyKey
      * @return TreeInterface
      */
-    public static function from(array $tree): TreeInterface
+    public static function from(array $tree, string $uniquelyKey): TreeInterface
     {
         return (new self($tree))
-            ->setTree($tree);
+            ->setTree($tree)
+            ->setUniquelyKey($uniquelyKey);
     }
 
     /**
@@ -129,5 +131,15 @@ class Tree implements TreeInterface
     public function toArray(): array
     {
         return $this->tree;
+    }
+
+    /**
+     * @param array $hidden
+     * @return Tree
+     */
+    public function setHidden(array $hidden): Tree
+    {
+        $this->hidden = $hidden;
+        return $this;
     }
 }
