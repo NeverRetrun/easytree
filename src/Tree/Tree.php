@@ -4,6 +4,7 @@
 namespace EasyTree\Tree;
 
 
+use EasyTree\Adapter\Container;
 use EasyTree\Exception\NotFoundUniquelyKey;
 
 class Tree implements TreeInterface
@@ -53,6 +54,8 @@ class Tree implements TreeInterface
         $isHidden = count($hiddenMap) > 0;
 
         foreach ($this->sourceData as $item) {
+            $item = Container::source($item);
+
             if ($isHidden) {
                 foreach ($item as $key => $value) {
                     if (isset($hiddenMap[$key])) {
@@ -61,7 +64,7 @@ class Tree implements TreeInterface
                 }
             }
 
-            $idMap[$item[$this->uniquelyKey]] = $item;
+            $idMap[$item[$this->uniquelyKey]] = $item->toArray();
         }
 
         $result = [];
