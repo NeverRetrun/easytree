@@ -7,7 +7,7 @@ namespace EasyTree\Adapter;
 
 use StdClass;
 
-class StdClassAdapter extends Adapter
+class StdClassAdapter extends AbstractAdapter
 {
     private $source;
 

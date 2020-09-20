@@ -7,7 +7,7 @@ namespace EasyTree\Exception;
 
 use Throwable;
 
-class NotSupportType extends \InvalidArgumentException
+class NotSupportType extends TreeException
 {
     public function __construct($message = "not support data type", $code = 0, Throwable $previous = null)
     {

@@ -6,7 +6,7 @@ namespace EasyTree\Exception;
 
 use Throwable;
 
-class NotFoundNode extends \RuntimeException
+class NotFoundNode extends TreeException
 {
     public function __construct($message = "not found node", $code = 0, Throwable $previous = null)
     {

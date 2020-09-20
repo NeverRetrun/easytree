@@ -6,7 +6,7 @@ namespace EasyTree\Adapter;
 
 
 
-class ArrayAdapter extends Adapter
+class ArrayAdapter extends AbstractAdapter
 {
     private $source;
 
