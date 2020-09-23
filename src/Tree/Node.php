@@ -49,6 +49,81 @@ class Node
         $child->parent = $this;
     }
 
+    public function getLevel(): int
+    {
+
+    }
+
+    public function hasChildren(): bool
+    {
+
+    }
+
+    public function countChildren(): int
+    {
+
+    }
+
+    protected function getAncestorsGeneric(bool $includeSelf): array
+    {
+
+    }
+
+    public function getAncestorsAndSelf(): array
+    {
+
+    }
+
+    public function getAncestors(): array
+    {
+
+    }
+
+    protected function getDescendantsGeneric(bool $includeSelf): array
+    {
+
+    }
+
+    public function getDescendantsAndSelf(): array
+    {
+
+    }
+
+    public function getDescendants(): array
+    {
+
+    }
+
+    protected function getSiblingsGeneric(bool $includeSelf): array
+    {
+
+    }
+
+    public function getSiblingsAndSelf(): array
+    {
+
+    }
+
+    public function getSiblings(): array
+    {
+
+    }
+
+    private function getSibling(int $offset): ?Node
+    {
+
+    }
+
+    public function getFollowingSibling(): ?Node
+    {
+
+    }
+
+    public function getPrecedingSibling(): ?Node
+    {
+
+    }
+
     /**
      * @return int|string
      */
