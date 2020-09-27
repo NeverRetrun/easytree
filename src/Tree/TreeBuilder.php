@@ -71,7 +71,7 @@ class TreeBuilder
 
         $nodes                = $children = [];
         $emptyData            = DefaultAdapter::source([]);
-        $nodes[$this->rootId] = new Node($this->rootId, null, $emptyData, []);
+        $nodes[$this->rootId] = new Node($this->rootId, null, $emptyData, [], $this->childrenKey);
 
         foreach ($this->originData as $nodeData) {
             if ($this->dataAdapter !== null) {
@@ -84,7 +84,8 @@ class TreeBuilder
                 $nodeData[$this->idKey],
                 $nodeData[$this->parentKey],
                 $adapterNodeData,
-                $nodeData
+                $nodeData,
+                $this->childrenKey
             );
 
             if (isset($children[$nodeData[$this->parentKey]])) {

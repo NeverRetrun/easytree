@@ -40,12 +40,24 @@ class Node
      */
     protected $originData;
 
-    public function __construct($id, $parentId, AbstractAdapter $adapterData, $originData)
+    /**
+     * @var string
+     */
+    protected $childrenKey;
+
+    public function __construct(
+        $id,
+        $parentId,
+        AbstractAdapter $adapterData,
+        $originData,
+        string $childrenKey
+    )
     {
         $this->id         = $id;
         $this->parentId   = $parentId;
         $this->data       = $adapterData;
         $this->originData = $originData;
+        $this->childrenKey = $childrenKey;
     }
 
     public function addChild(Node $child): void
@@ -55,16 +67,16 @@ class Node
         $child->parent    = $this;
     }
 
-    public function toArrayIncludeSelf(string $childrenKey): array
+    public function toArray(): array
     {
         if ($this->hasChildren() === false) {
             return $this->data->toArray();
         }
 
-        $node = $this->data->toArray();
-        $node['children'] = [];
+        $node             = $this->data->toArray();
+        $node[$this->childrenKey] = [];
         foreach ($this->children as $childrenNode) {
-            $node['children'][] = $childrenNode->toArrayIncludeSelf($childrenKey);
+            $node[$this->childrenKey][] = $childrenNode->toArray();
         }
 
         return $node;
@@ -74,8 +86,19 @@ class Node
     {
         if ($this->parent !== null) {
             return $this->parent->getLevel() + 1;
-        }else {
+        } else {
             return 0;
+        }
+    }
+
+    public function getChildrenIterable(): iterable
+    {
+        foreach ($this->children as $node) {
+            yield $node;
+
+            foreach ($node->getChildrenIterable() as $childrenNode) {
+                yield $childrenNode;
+            }
         }
     }
 
