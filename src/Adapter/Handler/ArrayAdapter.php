@@ -2,9 +2,9 @@
 
 declare (strict_types=1);
 
-namespace EasyTree\Adapter;
+namespace EasyTree\Adapter\Handler;
 
-
+use EasyTree\Adapter\AbstractAdapter;
 
 class ArrayAdapter extends AbstractAdapter
 {

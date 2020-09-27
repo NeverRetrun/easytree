@@ -9,5 +9,4 @@ use ArrayAccess;
 
 abstract class AbstractAdapter implements ArrayAble, ArrayAccess
 {
-
 }

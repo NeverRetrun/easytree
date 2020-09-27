@@ -5,6 +5,8 @@ declare (strict_types=1);
 namespace EasyTree\Adapter;
 
 
+use EasyTree\Adapter\Handler\ArrayAdapter;
+use EasyTree\Adapter\Handler\StdClassAdapter;
 use EasyTree\Exception\NotSupportType;
 use StdClass;
 

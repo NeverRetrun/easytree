@@ -16,7 +16,7 @@ class Node
 
     /**
      * 父级id
-     * @var int | string
+     * @var int | string | null
      */
     protected $parentId;
 
@@ -26,42 +26,67 @@ class Node
     protected $data;
 
     /**
-     * @var Node
+     * @var Node | null
      */
     protected $parent;
 
     /**
      * @var Node[]
      */
-    protected $children;
+    protected $children = [];
 
-    public function __construct($id, $parentId, array $data)
+    /**
+     * @var mixed
+     */
+    protected $originData;
+
+    public function __construct($id, $parentId, AbstractAdapter $adapterData, $originData)
     {
-        $this->id = $id;
-        $this->parentId = $parentId;
-        $this->data = $data;
+        $this->id         = $id;
+        $this->parentId   = $parentId;
+        $this->data       = $adapterData;
+        $this->originData = $originData;
     }
 
     public function addChild(Node $child): void
     {
         $this->children[] = $child;
-        $child->parentId = $this->getId();
-        $child->parent = $this;
+        $child->parentId  = $this->getId();
+        $child->parent    = $this;
+    }
+
+    public function toArrayIncludeSelf(string $childrenKey): array
+    {
+        if ($this->hasChildren() === false) {
+            return $this->data->toArray();
+        }
+
+        $node = $this->data->toArray();
+        $node['children'] = [];
+        foreach ($this->children as $childrenNode) {
+            $node['children'][] = $childrenNode->toArrayIncludeSelf($childrenKey);
+        }
+
+        return $node;
     }
 
     public function getLevel(): int
     {
-
+        if ($this->parent !== null) {
+            return $this->parent->getLevel() + 1;
+        }else {
+            return 0;
+        }
     }
 
     public function hasChildren(): bool
     {
-
+        return count($this->children) > 0;
     }
 
     public function countChildren(): int
     {
-
+        return count($this->children);
     }
 
     protected function getAncestorsGeneric(bool $includeSelf): array

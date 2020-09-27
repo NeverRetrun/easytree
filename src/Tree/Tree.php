@@ -17,14 +17,29 @@ class Tree
      */
     protected $nodes = [];
 
-    public function toArray(): array
+    public function __construct(array $nodes, TreeBuilder $treeBuilder)
     {
-
+        $this->nodes   = $nodes;
+        $this->builder = $treeBuilder;
     }
 
-    public function toJson(): array
+    public function toArray(): array
     {
+        $children = $this->nodes[$this->builder->getRootId()]->getChildren();
+        $nodes = [];
+        foreach ($children as $child) {
+            $nodes[] = $child->toArrayIncludeSelf($this->builder->getChildrenKey());
+        }
 
+        return $nodes;
+    }
+
+    public function toJson(): string
+    {
+        return json_encode(
+            $this->toArray(),
+            JSON_UNESCAPED_UNICODE
+        );
     }
 
     /**
