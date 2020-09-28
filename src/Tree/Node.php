@@ -53,10 +53,10 @@ class Node
         string $childrenKey
     )
     {
-        $this->id         = $id;
-        $this->parentId   = $parentId;
-        $this->data       = $adapterData;
-        $this->originData = $originData;
+        $this->id          = $id;
+        $this->parentId    = $parentId;
+        $this->data        = $adapterData;
+        $this->originData  = $originData;
         $this->childrenKey = $childrenKey;
     }
 
@@ -73,13 +73,19 @@ class Node
             return $this->data->toArray();
         }
 
-        $node             = $this->data->toArray();
+        $node                     = $this->data->toArray();
         $node[$this->childrenKey] = [];
         foreach ($this->children as $childrenNode) {
             $node[$this->childrenKey][] = $childrenNode->toArray();
         }
 
         return $node;
+    }
+
+    public function toTree(TreeBuilder $treeBuilder): Tree
+    {
+        $treeBuilder->setRootId($this->id);
+        return new Tree([$this], $treeBuilder);
     }
 
     public function getLevel(): int
@@ -89,6 +95,22 @@ class Node
         } else {
             return 0;
         }
+    }
+
+    public function getMaxLevel(): int
+    {
+        $level = $this->getLevel();
+
+        if ($this->hasChildren()) {
+            foreach ($this->children as $child) {
+                $childLevel = $child->getMaxLevel();
+                if ($childLevel > $level) {
+                    $level = $childLevel;
+                }
+            }
+        }
+
+        return $level;
     }
 
     public function getChildrenIterable(): iterable

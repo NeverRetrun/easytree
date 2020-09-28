@@ -51,6 +51,7 @@ class Tree
     }
 
     /**
+     * 遍历树
      * @param \Closure(Node):bool $handle
      * @return Tree
      */
@@ -74,6 +75,7 @@ class Tree
     }
 
     /**
+     * 搜索值
      * @param \Closure(Node):bool $handle
      * @return Tree
      */
@@ -90,12 +92,13 @@ class Tree
     }
 
     /**
+     * 遍历树搜索
      * @param \Closure(Node):bool $handle
      * @return array
      */
     public function searchAll(callable $handle): array
     {
-        $root = $this->nodes[$this->builder->getRootId()];
+        $root  = $this->nodes[$this->builder->getRootId()];
         $nodes = [];
         foreach ($root->getChildrenIterable() as $node) {
             if ($handle($node) === true) {
@@ -106,6 +109,11 @@ class Tree
         return $nodes;
     }
 
+    /**
+     * 判断是否包含某个值
+     * @param callable $handle
+     * @return bool
+     */
     public function contain(callable $handle): bool
     {
         $root = $this->nodes[$this->builder->getRootId()];
@@ -118,21 +126,41 @@ class Tree
         return false;
     }
 
+    /**
+     * 子节点转树
+     * @param callable $handle
+     * @return Tree
+     */
     public function getChildTree(callable $handle): Tree
     {
-
-    }
-
-    public function isOverHeight(int $limitHeight): bool
-    {
-
+        return $this->search($handle)->toTree($this->builder);
     }
 
     /**
+     * 判断树是否超出高度
+     * @param int $limitHeight
+     * @return bool
+     */
+    public function isOverHeight(int $limitHeight): bool
+    {
+        return $this->getRoot()->getMaxLevel() < $limitHeight;
+    }
+
+    /**
+     * 获取root的子节点
      * @return Node[]
      */
     protected function getRootChildren(): array
     {
-        return $this->nodes[$this->builder->getRootId()]->getChildren();
+        return $this->getRoot()->getChildren();
+    }
+
+    /**
+     * 获取root节点
+     * @return Node
+     */
+    protected function getRoot(): Node
+    {
+        return $this->nodes[$this->builder->getRootId()];
     }
 }
