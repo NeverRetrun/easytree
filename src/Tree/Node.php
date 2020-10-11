@@ -60,6 +60,10 @@ class Node
         $this->childrenKey = $childrenKey;
     }
 
+    /**
+     * 追加子节点
+     * @param Node $child
+     */
     public function addChild(Node $child): void
     {
         $this->children[] = $child;
@@ -67,6 +71,9 @@ class Node
         $child->parent    = $this;
     }
 
+    /**
+     * @return array
+     */
     public function toArray(): array
     {
         if ($this->hasChildren() === false) {
@@ -82,12 +89,20 @@ class Node
         return $node;
     }
 
+    /**
+     * @param TreeBuilder $treeBuilder
+     * @return Tree
+     */
     public function toTree(TreeBuilder $treeBuilder): Tree
     {
         $treeBuilder->setRootId($this->id);
         return new Tree([$this], $treeBuilder);
     }
 
+    /**
+     * 获取等级
+     * @return int
+     */
     public function getLevel(): int
     {
         if ($this->parent !== null) {
@@ -97,6 +112,10 @@ class Node
         }
     }
 
+    /**
+     * 获取节点最大等级
+     * @return int
+     */
     public function getMaxLevel(): int
     {
         $level = $this->getLevel();
@@ -113,6 +132,14 @@ class Node
         return $level;
     }
 
+    /**
+     * 获取树遍历器
+     *
+     * foreach ($node->getChildrenIterable() as $node) 的方式遍历
+     * 节点与该子节点数据。
+     *
+     * @return iterable
+     */
     public function getChildrenIterable(): iterable
     {
         foreach ($this->children as $node) {
@@ -124,75 +151,24 @@ class Node
         }
     }
 
+    /**
+     * 判断是否有子集
+     * @return bool
+     */
     public function hasChildren(): bool
     {
         return count($this->children) > 0;
     }
 
+    /**
+     * 获取子集个数
+     * @return int
+     */
     public function countChildren(): int
     {
         return count($this->children);
     }
 
-    protected function getAncestorsGeneric(bool $includeSelf): array
-    {
-
-    }
-
-    public function getAncestorsAndSelf(): array
-    {
-
-    }
-
-    public function getAncestors(): array
-    {
-
-    }
-
-    protected function getDescendantsGeneric(bool $includeSelf): array
-    {
-
-    }
-
-    public function getDescendantsAndSelf(): array
-    {
-
-    }
-
-    public function getDescendants(): array
-    {
-
-    }
-
-    protected function getSiblingsGeneric(bool $includeSelf): array
-    {
-
-    }
-
-    public function getSiblingsAndSelf(): array
-    {
-
-    }
-
-    public function getSiblings(): array
-    {
-
-    }
-
-    private function getSibling(int $offset): ?Node
-    {
-
-    }
-
-    public function getFollowingSibling(): ?Node
-    {
-
-    }
-
-    public function getPrecedingSibling(): ?Node
-    {
-
-    }
 
     /**
      * @return int|string

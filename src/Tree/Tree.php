@@ -57,7 +57,7 @@ class Tree
      */
     public function each(callable $handle): Tree
     {
-        $root = $this->nodes[$this->builder->getRootId()];
+        $root = $this->getRoot();
         foreach ($root->getChildrenIterable() as $node) {
             $result = $handle($node);
 
@@ -69,11 +69,6 @@ class Tree
         return $this;
     }
 
-    public function macro()
-    {
-
-    }
-
     /**
      * 搜索值
      * @param \Closure(Node):bool $handle
@@ -81,7 +76,7 @@ class Tree
      */
     public function search(callable $handle): Node
     {
-        $root = $this->nodes[$this->builder->getRootId()];
+        $root = $this->getRoot();
         foreach ($root->getChildrenIterable() as $node) {
             if ($handle($node) === true) {
                 return $node;
@@ -98,7 +93,7 @@ class Tree
      */
     public function searchAll(callable $handle): array
     {
-        $root  = $this->nodes[$this->builder->getRootId()];
+        $root  = $this->getRoot();
         $nodes = [];
         foreach ($root->getChildrenIterable() as $node) {
             if ($handle($node) === true) {
@@ -116,7 +111,7 @@ class Tree
      */
     public function contain(callable $handle): bool
     {
-        $root = $this->nodes[$this->builder->getRootId()];
+        $root = $this->getRoot();
         foreach ($root->getChildrenIterable() as $node) {
             if ($handle($node) === true) {
                 return true;
@@ -138,12 +133,12 @@ class Tree
 
     /**
      * 判断树是否超出高度
-     * @param int $limitHeight
+     * @param int $limitLevel
      * @return bool
      */
-    public function isOverHeight(int $limitHeight): bool
+    public function isOverLevel(int $limitLevel): bool
     {
-        return $this->getRoot()->getMaxLevel() < $limitHeight;
+        return $this->getRoot()->getMaxLevel() < $limitLevel;
     }
 
     /**
