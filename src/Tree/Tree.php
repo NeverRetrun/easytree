@@ -15,6 +15,7 @@ class Tree
 
     /**
      * 树节点
+     *
      * @var Node[]
      */
     protected $nodes = [];
@@ -26,11 +27,14 @@ class Tree
     }
 
     /**
+     * 获取数组
+     *
      * @return array
      */
     public function toArray(): array
     {
         $children = $this->getRootChildren();
+
         $nodes    = [];
         foreach ($children as $child) {
             $nodes[] = $child->toArray();
@@ -40,6 +44,8 @@ class Tree
     }
 
     /**
+     * 获取JSON unicode
+     *
      * @return string
      */
     public function toJson(): string
@@ -52,6 +58,7 @@ class Tree
 
     /**
      * 遍历树
+     *
      * @param \Closure(Node):bool $handle
      * @return Tree
      */
@@ -71,6 +78,7 @@ class Tree
 
     /**
      * 搜索值
+     *
      * @param \Closure(Node):bool $handle
      * @return Tree
      */
@@ -88,6 +96,7 @@ class Tree
 
     /**
      * 遍历树搜索
+     *
      * @param \Closure(Node):bool $handle
      * @return array
      */
@@ -106,6 +115,7 @@ class Tree
 
     /**
      * 判断是否包含某个值
+     *
      * @param callable $handle
      * @return bool
      */
@@ -123,6 +133,7 @@ class Tree
 
     /**
      * 子节点转树
+     *
      * @param callable $handle
      * @return Tree
      */
@@ -133,6 +144,7 @@ class Tree
 
     /**
      * 判断树是否超出高度
+     *
      * @param int $limitLevel
      * @return bool
      */
@@ -143,6 +155,7 @@ class Tree
 
     /**
      * 获取root的子节点
+     *
      * @return Node[]
      */
     protected function getRootChildren(): array
@@ -152,6 +165,7 @@ class Tree
 
     /**
      * 获取root节点
+     *
      * @return Node
      */
     protected function getRoot(): Node

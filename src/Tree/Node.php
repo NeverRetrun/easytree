@@ -72,18 +72,21 @@ class Node
     }
 
     /**
+     * @param bool $isIncludeChildren
      * @return array
      */
-    public function toArray(): array
+    public function toArray(bool $isIncludeChildren = true): array
     {
         if ($this->hasChildren() === false) {
             return $this->data->toArray();
         }
 
-        $node                     = $this->data->toArray();
-        $node[$this->childrenKey] = [];
-        foreach ($this->children as $childrenNode) {
-            $node[$this->childrenKey][] = $childrenNode->toArray();
+        $node = $this->data->toArray();
+        if ($isIncludeChildren) {
+            $node[$this->childrenKey] = [];
+            foreach ($this->children as $childrenNode) {
+                $node[$this->childrenKey][] = $childrenNode->toArray();
+            }
         }
 
         return $node;
@@ -96,7 +99,10 @@ class Node
     public function toTree(TreeBuilder $treeBuilder): Tree
     {
         $treeBuilder->setRootId($this->id);
-        return new Tree([$this], $treeBuilder);
+        return new Tree(
+            [$this->getId() => $this]
+            , $treeBuilder
+        );
     }
 
     /**
