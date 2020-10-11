@@ -18,7 +18,7 @@
 ---
 
 ```bash
-$ composer require cvoid/easytree -vvv
+$ composer require cvoid/easytree  -vvv
 ```
 
 ### Usage
@@ -38,15 +38,11 @@ $foo = [
     ['id' => 5, 'name' => '矿泉水', 'parent_id' => 4],
 ];
 
-$tree = (new \EasyTree\Tree\Tree($foo))
-    ->setUniquelyKey('id')
-    ->setChildKey('children')
+$tree = (new \EasyTree\Tree\TreeBuilder($foo))
+    ->setIdKey('id')
     ->setParentKey('parent_id')
-    ->generate();
-# 如果你的数据也是parent_id，新的子集字段也叫children，那么你可以简写成
-$tree = (new \EasyTree\Tree\Tree($foo))
-    ->setUniquelyKey('id')
-  	->generate();
+    ->setChildrenKey('children')
+    ->build();
 
 print_r($tree->toArray());
 
@@ -83,51 +79,6 @@ Array
 
 ```
 
-* 你也可以选择返回带有子集个数的树数组结构
-
-```php
-<?php
-
-require_once './vendor/autoload.php';
-
-$foo = [
-    ['id' => 1, 'name' => '食物', 'parent_id' => 0],
-    ['id' => 4, 'name' => '饮料', 'parent_id' => 1],
-];
-
-$tree = (new \EasyTree\Tree\Tree($foo))
-    ->setUniquelyKey('id')
-    ->setChildKey('children')
-    ->setParentKey('parent_id')
-    ->generate();
-
-print_r(
-    $tree->appendSubsetCount()
-    ->toArray()
-);
-echo -----
-Array
-(
-    [0] => Array
-        (
-            [id] => 1
-            [name] => 食物
-            [children] => Array
-                (
-                    [0] => Array
-                        (
-                            [id] => 4
-                            [name] => 饮料
-                            [subset] => 0
-                        )
-
-                )
-
-            [subset] => 1
-        )
-
-)
-```
 
 * 你可以进行搜索节点，这里提供了3种搜索方式
 
@@ -136,20 +87,28 @@ Array
      ```php
      <?php
        
-     	$tree = (new \EasyTree\Tree\Tree($foo))
-         	->setUniquelyKey('id')
-         	->setChildKey('children')
-         	->setParentKey('parent_id')
-         	->generate();
+     	$tree = (new \EasyTree\Tree\TreeBuilder($foo))
+		    ->setIdKey('id')
+		    ->setParentKey('parent_id')
+		    ->setChildrenKey('children')
+		    ->build();
      	
      	#搜索节点id = 5的节点
-     	$node = $tree->searchNode('id', 5);
+     	$node = $tree->search(
+			function($node) {
+				return $node->getId() === 5;
+			}
+		);
      	
        #搜索节点name = 矿泉水的节点
-     	$node = $tree->searchNode('name', '矿泉水');
+     	$node = $tree->search(
+			function($node) {
+				return $node->getData()->toArray()['name'] === '矿泉水';
+			}
+		);
      
      	##你可以获取节点的高度 或者 数据
-     	$node->data;
+     	$node->getData()->toArray();
        echo -----
          Array
      		(
@@ -157,58 +116,47 @@ Array
          		[name] => 矿泉水
      		)
          
-       $node->nodeHeight;  
+       $node->getLevel();  
      	echo -----
          3
-     ```
-
-   * 根据多个节点来搜索
-
-     ```php
-     <?php
-     $tree = (new \EasyTree\Tree\Tree($foo))
-         ->setUniquelyKey('id')
-         ->setChildKey('children')
-         ->setParentKey('parent_id')
-         ->generate();
-     try {
-         $nodes = $tree->searchNodes('name', ['饮料', '矿泉水']);
-     }catch (\EasyTree\Exception\NotFoundNode $e) {
-         # not found node ...
-     }
-     print_r($nodes);
-     #这里会返回array<Node>
      ```
 
    * 查询单个节点，保存查询路径
 
      ```php
      <?php
-     $tree = (new \EasyTree\Tree\Tree($foo))
-         ->setUniquelyKey('id')
-         ->setChildKey('children')
-         ->setParentKey('parent_id')
-         ->generate();
-     try {
-         $nodes = $tree->searchNodePath('name', '矿泉水');
-     }catch (\EasyTree\Exception\NotFoundNode $e) {
-         # not found node ...
-     }
+     $tree = (new \EasyTree\Tree\TreeBuilder($foo))
+		    ->setIdKey('id')
+		    ->setParentKey('parent_id')
+		    ->setChildrenKey('children')
+		    ->build();
+    
+     $nodes = $tree->searchAll(
+	     function($node) {
+		     return $node->getParentId() === 1;
+	     }
+     );
+    
      print_r($nodes);
      #这里会返回 [矿泉水TreeNode对象, 饮料TreeNode对象, 食品TreeNode对象]
      ```
 
-* 你可以有个轻松的方式来循环树。`getIterable`方法将会返回一个迭代器。
+* 你可以有个轻松的方式来循环树。`each`方法遍历树。
 
    ```php
    <?php
-   $tree = (new EasyTree\Tree\Tree($foo))
-       ->setUniquelyKey('id')
-       ->generate();
+   $tree = (new \EasyTree\Tree\TreeBuilder($foo))
+		    ->setIdKey('id')
+		    ->setParentKey('parent_id')
+		    ->setChildrenKey('children')
+		    ->build();
    
-   foreach ($tree->getIterable() as $node) {
-       var_dump($node);
-   }
+   $tree->each(
+	   function($node) {
+		   # dump node data
+			var_dump($node);
+		}
+	)
    ```
 
    
