@@ -177,7 +177,7 @@ Array
          # not found node ...
      }
      print_r($nodes);
-     #这里会返回array<TreeNode>
+     #这里会返回array<Node>
      ```
 
    * 查询单个节点，保存查询路径

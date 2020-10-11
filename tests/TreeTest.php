@@ -6,89 +6,16 @@ use EasyTree\Tree\Tree;
 
 final class TreeTest extends TestCase
 {
-    public $foo = [
-        ['id' => 1, 'name' => '食物', 'parent_id' => 0],
-        ['id' => 2, 'name' => '车辆', 'parent_id' => 0],
-        ['id' => 3, 'name' => '面条', 'parent_id' => 1],
-        ['id' => 4, 'name' => '饮料', 'parent_id' => 1],
-        ['id' => 5, 'name' => '矿泉水', 'parent_id' => 4],
-        ['id' => 6, 'name' => '校车', 'parent_id' => 2],
-    ];
+    use TreeDataTrait;
 
-    public $fooSubset = [
-        ['id' => 1, 'name' => '食物', 'parent_id' => 0, 'subset' => 2],
-        ['id' => 2, 'name' => '车辆', 'parent_id' => 0, 'subset' => 1],
-        ['id' => 3, 'name' => '面条', 'parent_id' => 1, 'subset' => 0],
-        ['id' => 4, 'name' => '饮料', 'parent_id' => 1, 'subset' => 1],
-        ['id' => 5, 'name' => '矿泉水', 'parent_id' => 4, 'subset' => 0],
-        ['id' => 6, 'name' => '校车', 'parent_id' => 2, 'subset' => 0],
-    ];
-
-    public $fooTree = [
-        [
-            'id'       => 1,
-            'name'     => '食物',
-            'children' => [
-                [
-                    'id'   => 3,
-                    'name' => '面条',
-                ],
-                [
-                    'id'       => 4,
-                    'name'     => '饮料',
-                    'children' => [
-                        [
-                            'id'   => 5,
-                            'name' => '矿泉水'
-                        ],
-                    ]
-                ],
-            ],
-        ],
-        [
-            'id'       => 2,
-            'name'     => '车辆',
-            'children' => [
-                [
-                    'id'   => 6,
-                    'name' => '校车'
-                ],
-            ]
-        ],
-    ];
-
-
-    /**
-     * 测试生成树 返回行
-     */
-    public function testTreeToRow()
+    public function searchOriginData($id)
     {
-        $this->assertEquals(
-            self::sort($this->foo),
-            self::sort(
-                (new Tree($this->foo))
-                    ->setUniquelyKey('id')
-                    ->generate(true)
-                    ->toRow()
-            )
-        );
-    }
-
-    /**
-     * 测试追加子集字段
-     */
-    public function testAppendSubsetCount()
-    {
-        $this->assertEquals(
-            self::sort($this->fooSubset),
-            self::sort(
-                (new Tree($this->fooSubset))
-                    ->setUniquelyKey('id')
-                    ->generate(true)
-                    ->appendSubsetCount()
-                    ->toRow()
-            )
-        );
+        foreach ($this->foo as $node) {
+            if ($node['id'] === $id) {
+                return $node;
+            }
+        }
+        return null;
     }
 
     /**
@@ -98,126 +25,103 @@ final class TreeTest extends TestCase
     {
         $this->assertEquals(
             json_encode($this->fooTree, JSON_UNESCAPED_UNICODE),
-            json_encode(
-                (new Tree($this->foo))
-                    ->setUniquelyKey('id')
-                    ->generate()
-                    ->toArray()
-                , JSON_UNESCAPED_UNICODE
-            )
+            json_encode($this->getTree()->toArray(), JSON_UNESCAPED_UNICODE)
         );
     }
 
-    public function testFrom()
+    public function testEach()
     {
-        $this->assertInstanceOf(
-            \EasyTree\Tree\Tree::class,
-            Tree::from($this->fooTree, 'id')
-        );
-    }
-
-    public function testGetIterable()
-    {
-        $tree = (new Tree($this->foo))
-            ->setUniquelyKey('id')
-            ->generate();
-
-        $this->assertIsIterable($tree->getIterable());
-    }
-
-    public function testSetNodeTree()
-    {
-        $tree = (new Tree($this->foo))
-            ->setUniquelyKey('id')
-            ->generate()
-            ->setNodeTree();
-
-        $nodeTree = $tree->getNodeTree();
-
-        foreach ($tree->getIterable($nodeTree) as $node) {
-            $this->assertInstanceOf(
-                \EasyTree\TreeNode\TreeNode::class,
-                $node
+        $this->getTree()
+            ->each(
+                function (\EasyTree\Tree\Node $node) {
+                    $originData = $node->getData()->toArray();
+                    $this->assertEquals(
+                        $this->searchOriginData($originData['id']),
+                        $originData
+                    );
+                }
             );
-        }
     }
 
-    public function testSearchNode()
+    public function testSearch()
     {
-        $node = (new Tree($this->foo))
-            ->setUniquelyKey('id')
-            ->generate()
-            ->searchNode('id', 5);
-
-        $this->assertInstanceOf(
-            \EasyTree\TreeNode\TreeNode::class,
-            $node
-        );
-
         $this->assertEquals(
-            ['id' => 5, 'name' => '矿泉水'],
-            $node->data
+            $this->getTree()
+                ->search(
+                    function (\EasyTree\Tree\Node $node) {
+                        return $node->getId() === 2;
+                    }
+                )
+                ->toArray(false),
+            ['id' => 2, 'name' => '车辆', 'parent_id' => 0]
         );
     }
 
-    public function testSearchNodes()
+    public function testContain()
     {
-        $nodes = (new Tree($this->foo))
-            ->setUniquelyKey('id')
-            ->generate()
-            ->searchNodes('name', ['食物', '饮料', '矿泉水']);
-
         $this->assertEquals(
-            $this->fooTree[0],
-            $nodes[0]->data
+            $this->getTree()
+                ->contain(
+                    function (\EasyTree\Tree\Node $node) {
+                        return $node->getId() === 4;
+                    }
+                ),
+            true
         );
 
         $this->assertEquals(
-            $this->fooTree[0]['children'][1],
-            $nodes[1]->data
-        );
-
-        $this->assertEquals(
-            $this->fooTree[0]['children'][1]['children'][0],
-            $nodes[2]->data
+            $this->getTree()
+                ->contain(
+                    function (\EasyTree\Tree\Node $node) {
+                        return $node->getId() === 10;
+                    }
+                ),
+            false
         );
     }
 
-    public function testSearchNodePath()
+    public function testGetChildTree()
     {
-        $nodes = (new Tree($this->foo))
-            ->setUniquelyKey('id')
-            ->generate()
-            ->searchNodePath('id', 5);
-
         $this->assertEquals(
-            $this->fooTree[0]['children'][1]['children'][0],
-            $nodes[0]->data
-        );
+            $this->getTree()
+                ->getChildTree(
+                    function (\EasyTree\Tree\Node $node) {
+                        return $node->getId() === 1;
+                    }
+                )->toArray(),
 
-        $this->assertEquals(
-            $this->fooTree[0]['children'][1],
-            $nodes[1]->data
-        );
-
-        $this->assertEquals(
-            $this->fooTree[0],
-            $nodes[2]->data
+            [
+                [
+                    'id'        => 3,
+                    'name'      => '面条',
+                    'parent_id' => 1,
+                ],
+                [
+                    'id'        => 4,
+                    'name'      => '饮料',
+                    'parent_id' => 1,
+                    'children'  => [
+                        [
+                            'id'        => 5,
+                            'name'      => '矿泉水',
+                            'parent_id' => 4,
+                        ],
+                    ]
+                ],
+            ]
         );
     }
 
-    /**
-     * 比较2个 数组相同所需的排序
-     * @param array $array
-     * @param string $key
-     * @return array
-     */
-    public static function sort(array $array, string $key = 'id'): array
+    public function testIsOverLevel()
     {
-        uasort($array, function ($a, $b) use ($key) {
-            return $a[$key] <=> $b[$key];
-        });
+        $this->assertEquals(
+            $this->getTree()->isOverLevel(3),
+            false
+        );
 
-        return array_values($array);
+        $this->assertEquals(
+            $this->getTree()->isOverLevel(4),
+            true
+        );
     }
 }

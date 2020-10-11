@@ -4,142 +4,172 @@
 namespace EasyTree\Tree;
 
 
-use EasyTree\Adapter\Container;
-use EasyTree\Exception\NotFoundUniquelyKey;
+use EasyTree\Exception\NotFoundNode;
 
 class Tree
 {
-    use TreeSearcher;
+    /**
+     * @var TreeBuilder
+     */
+    protected $builder;
 
     /**
-     * @var array 原数据
+     * 树节点
+     *
+     * @var Node[]
      */
-    private $sourceData;
+    protected $nodes = [];
 
-    /**
-     * 需要隐藏的键值 类似 ['id', 'name']
-     * @var array
-     */
-    private $hidden = [];
-
-    public function __construct(array $sourceData)
+    public function __construct(array $nodes, TreeBuilder $treeBuilder)
     {
-        $this->sourceData = $sourceData;
+        $this->nodes   = $nodes;
+        $this->builder = $treeBuilder;
     }
 
     /**
-     * 数组树 to 对象
-     * @param array $tree
-     * @param string $uniquelyKey
-     * @return Tree
-     */
-    public static function from(array $tree, string $uniquelyKey): Tree
-    {
-        return (new self($tree))
-            ->setTree($tree)
-            ->setUniquelyKey($uniquelyKey);
-    }
-
-    /**
-     * 生成树
-     * @param bool $isSaveParentId
-     * @return Tree
-     */
-    public function generate(bool $isSaveParentId = false): Tree
-    {
-        if (null === $this->uniquelyKey){
-            throw new NotFoundUniquelyKey();
-        }
-
-        $idMap = [];
-        $hiddenMap = array_flip($this->hidden);
-        $isHidden = count($hiddenMap) > 0;
-
-        foreach ($this->sourceData as $item) {
-            $item = Container::source($item);
-
-            if ($isHidden) {
-                foreach ($item as $key => $value) {
-                    if (isset($hiddenMap[$key])) {
-                        unset($item[$key]);
-                    }
-                }
-            }
-
-            $idMap[$item[$this->uniquelyKey]] = $item->toArray();
-        }
-
-        $result = [];
-        foreach ($idMap as &$item) {
-            if (isset($idMap[$item[$this->parentKey]]) && !empty($idMap[$item[$this->parentKey]])) {
-                $idMap[$item[$this->parentKey]][$this->childKey][] = &$item;
-            } else {
-                $result[] = &$item;
-            }
-            if ($isSaveParentId === false) {
-                unset($item[$this->parentKey]);
-            }
-
-        }
-
-        $this->tree = $result;
-        return $this;
-    }
-
-    /**
-     * 追加计算子集个数字段
-     * @param array|null $tree
-     * @return Tree
-     */
-    public function appendSubsetCount(?array &$tree = null): Tree
-    {
-        if (null === $tree) {
-            $tree =& $this->tree;
-        }
-
-        foreach ($tree as &$node) {
-            if (isset($node[$this->childKey])) {
-                $node[$this->countSubsetKey] = count($node[$this->childKey]);
-                $this->appendSubsetCount($node[$this->childKey]);
-            } else {
-                $node[$this->countSubsetKey] = 0;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * 将树结果转成行结果
-     * @return array
-     */
-    public function toRow(): array
-    {
-        $rows = [];
-        foreach ($this->getIterable() as $item) {
-            unset($item[$this->childKey]);
-            $rows[] = $item;
-        }
-
-        return $rows;
-    }
-
-    /**
-     * 返回树数组
+     * 获取数组
+     *
      * @return array
      */
     public function toArray(): array
     {
-        return $this->tree;
+        $children = $this->getRootChildren();
+
+        $nodes    = [];
+        foreach ($children as $child) {
+            $nodes[] = $child->toArray();
+        }
+
+        return $nodes;
     }
 
     /**
-     * @param array $hidden
+     * 获取JSON unicode
+     *
+     * @return string
+     */
+    public function toJson(): string
+    {
+        return json_encode(
+            $this->toArray(),
+            JSON_UNESCAPED_UNICODE
+        );
+    }
+
+    /**
+     * 遍历树
+     *
+     * @param \Closure(Node):bool $handle
      * @return Tree
      */
-    public function setHidden(array $hidden): Tree
+    public function each(callable $handle): Tree
     {
-        $this->hidden = $hidden;
+        $root = $this->getRoot();
+        foreach ($root->getChildrenIterable() as $node) {
+            $result = $handle($node);
+
+            if (false === $result) {
+                break;
+            }
+        }
+
         return $this;
+    }
+
+    /**
+     * 搜索值
+     *
+     * @param \Closure(Node):bool $handle
+     * @return Tree
+     */
+    public function search(callable $handle): Node
+    {
+        $root = $this->getRoot();
+        foreach ($root->getChildrenIterable() as $node) {
+            if ($handle($node) === true) {
+                return $node;
+            }
+        }
+
+        throw new NotFoundNode();
+    }
+
+    /**
+     * 遍历树搜索
+     *
+     * @param \Closure(Node):bool $handle
+     * @return array
+     */
+    public function searchAll(callable $handle): array
+    {
+        $root  = $this->getRoot();
+        $nodes = [];
+        foreach ($root->getChildrenIterable() as $node) {
+            if ($handle($node) === true) {
+                $nodes[] = $node;
+            }
+        }
+
+        return $nodes;
+    }
+
+    /**
+     * 判断是否包含某个值
+     *
+     * @param callable $handle
+     * @return bool
+     */
+    public function contain(callable $handle): bool
+    {
+        $root = $this->getRoot();
+        foreach ($root->getChildrenIterable() as $node) {
+            if ($handle($node) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 子节点转树
+     *
+     * @param callable $handle
+     * @return Tree
+     */
+    public function getChildTree(callable $handle): Tree
+    {
+        return $this->search($handle)->toTree($this->builder);
+    }
+
+    /**
+     * 判断树是否超出高度
+     *
+     * @param int $limitLevel
+     * @return bool
+     */
+    public function isOverLevel(int $limitLevel): bool
+    {
+        return $this->getRoot()->getMaxLevel() < $limitLevel;
+    }
+
+    /**
+     * 获取root的子节点
+     *
+     * @return Node[]
+     */
+    protected function getRootChildren(): array
+    {
+        return $this->getRoot()->getChildren();
+    }
+
+    /**
+     * 获取root节点
+     *
+     * @return Node
+     */
+    protected function getRoot(): Node
+    {
+        return $this->nodes[$this->builder->getRootId()];
     }
 }

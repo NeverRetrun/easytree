@@ -7,7 +7,6 @@ namespace EasyTree\Adapter;
 
 use ArrayAccess;
 
-abstract class Adapter implements ArrayAble, ArrayAccess
+abstract class AbstractAdapter implements ArrayAble, ArrayAccess
 {
-
 }
