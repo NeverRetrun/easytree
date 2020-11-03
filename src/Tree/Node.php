@@ -99,6 +99,7 @@ class Node
     public function toTree(TreeBuilder $treeBuilder): Tree
     {
         $treeBuilder->setRootId($this->id);
+
         return new Tree(
             [$this->getId() => $this]
             , $treeBuilder
