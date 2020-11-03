@@ -20,7 +20,7 @@
 ---
 
 ```bash
-$ composer require "cvoid/easytree^2"  -vvv
+$ composer require "cvoid/easytree:^2"  -vvv
 ```
 
 ### Usage
@@ -119,7 +119,7 @@ echo -----
 [{"id":1,"name":"食物","parent_id":0,"children":[{"id":3,"name":"面条","parent_id":1},{"id":4,"name":"饮料","parent_id":1,"children":[{"id":5,"name":"矿泉水","parent_id":4}]}]},{"id":2,"name":"车辆","parent_id":0,"children":[{"id":6,"name":"校车","parent_id":2}]}]
 ```
 
-#####each
+##### each
 
 ```php
 <?php
@@ -137,7 +137,7 @@ $tree->each(
 )
 ```
 
-#####search
+##### search
 
 ```php
 <?php
@@ -176,7 +176,7 @@ $tree->each(
     3
 ```
 
-#####searchAll
+##### searchAll
 
 ```php
 <?php
