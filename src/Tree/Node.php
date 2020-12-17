@@ -202,6 +202,16 @@ class Node
     }
 
     /**
+     * @param AbstractAdapter $abstractAdapter
+     * @return $this
+     */
+    public function setData(AbstractAdapter $abstractAdapter):Node
+    {
+        $this->data = $abstractAdapter;
+        return $this;
+    }
+
+    /**
      * @return Node
      */
     public function getParent(): Node
