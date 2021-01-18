@@ -78,7 +78,9 @@ class Node
     public function toArray(bool $isIncludeChildren = true): array
     {
         if ($this->hasChildren() === false) {
-            return $this->data->toArray();
+            $node = $this->data->toArray();
+            $node[$this->childrenKey] = [];
+            return $node;
         }
 
         $node = $this->data->toArray();
