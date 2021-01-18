@@ -80,18 +80,18 @@ class TreeBuilder
                 $adapterNodeData = DefaultAdapter::source($nodeData);
             }
 
-            $nodes[$nodeData[$this->idKey]] = new Node(
-                $nodeData[$this->idKey],
-                $nodeData[$this->parentKey],
+            $nodes[$adapterNodeData[$this->idKey]] = new Node(
+                $adapterNodeData[$this->idKey],
+                $adapterNodeData[$this->parentKey],
                 $adapterNodeData,
-                $nodeData,
+                $adapterNodeData,
                 $this->childrenKey
             );
 
-            if (isset($children[$nodeData[$this->parentKey]])) {
-                $children[$nodeData[$this->parentKey]][] = $nodeData[$this->idKey];
+            if (isset($children[$adapterNodeData[$this->parentKey]])) {
+                $children[$adapterNodeData[$this->parentKey]][] = $adapterNodeData[$this->idKey];
             } else {
-                $children[$nodeData[$this->parentKey]] = [$nodeData[$this->idKey]];
+                $children[$adapterNodeData[$this->parentKey]] = [$adapterNodeData[$this->idKey]];
             }
         }
 
