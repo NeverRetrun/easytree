@@ -73,13 +73,16 @@ class Node
 
     /**
      * @param bool $isIncludeChildren
+     * @param bool $isIgnoreEmptyChildrenKey
      * @return array
      */
-    public function toArray(bool $isIncludeChildren = true): array
+    public function toArray(bool $isIgnoreEmptyChildrenKey = false, bool $isIncludeChildren = true): array
     {
         if ($this->hasChildren() === false) {
             $node = $this->data->toArray();
-            $node[$this->childrenKey] = [];
+            if ($isIgnoreEmptyChildrenKey === false) {
+                $node[$this->childrenKey] = [];
+            }
             return $node;
         }
 
@@ -87,7 +90,7 @@ class Node
         if ($isIncludeChildren) {
             $node[$this->childrenKey] = [];
             foreach ($this->children as $childrenNode) {
-                $node[$this->childrenKey][] = $childrenNode->toArray();
+                $node[$this->childrenKey][] = $childrenNode->toArray($isIgnoreEmptyChildrenKey);
             }
         }
 
@@ -207,7 +210,7 @@ class Node
      * @param AbstractAdapter $abstractAdapter
      * @return $this
      */
-    public function setData(AbstractAdapter $abstractAdapter):Node
+    public function setData(AbstractAdapter $abstractAdapter): Node
     {
         $this->data = $abstractAdapter;
         return $this;
