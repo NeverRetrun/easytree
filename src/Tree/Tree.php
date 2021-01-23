@@ -4,7 +4,9 @@
 namespace EasyTree\Tree;
 
 
+use EasyTree\Adapter\Handler\ArrayAdapter;
 use EasyTree\Exception\NotFoundNode;
+use EasyTree\Exception\TreeException;
 
 class Tree
 {
@@ -29,15 +31,16 @@ class Tree
     /**
      * 获取数组
      *
+     * @param bool $isIgnoreEmptyChildrenKey
      * @return array
      */
-    public function toArray(): array
+    public function toArray(bool $isIgnoreEmptyChildrenKey = false): array
     {
         $children = $this->getRootChildren();
 
-        $nodes    = [];
+        $nodes = [];
         foreach ($children as $child) {
-            $nodes[] = $child->toArray();
+            $nodes[] = $child->toArray($isIgnoreEmptyChildrenKey);
         }
 
         return $nodes;
@@ -65,12 +68,39 @@ class Tree
     public function each(callable $handle): Tree
     {
         $root = $this->getRoot();
+
         foreach ($root->getChildrenIterable() as $node) {
             $result = $handle($node);
 
             if (false === $result) {
                 break;
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param \Closure(Node $node, int $level): bool $handle
+     * @return $this
+     */
+    public function map(callable $handle): Tree
+    {
+        $root = $this->getRoot();
+        /**
+         * @var Node $node
+         * @var int $level
+         */
+        foreach ($root->getChildrenIterable() as $node) {
+            $itemArray = $handle($node->toArray(), $node->getLevel());
+            if (false === $itemArray) {
+                break;
+            }
+            if (!is_array($itemArray)) {
+                throw new TreeException('callback not return array or bool');
+            }
+
+            $node->setData(new ArrayAdapter($itemArray));
         }
 
         return $this;
