@@ -53,6 +53,12 @@ class TreeBuilder
     protected $dataAdapter = null;
 
     /**
+     * 是否允许父级字段不存在
+     * @var bool
+     */
+    protected $isAllowParentKeyNotExist = false;
+
+    /**
      * TreeBuilder constructor.
      * @param array $data
      */
@@ -104,7 +110,11 @@ class TreeBuilder
                     }
                     $nodes[$pid]->addChild($nodes[$id]);
                 } else {
-                    throw new InvalidParentId("Node with ID {$id} points to non-existent parent with ID {$pid}");
+                    if ($this->isAllowParentKeyNotExist === false) {
+                        throw new InvalidParentId("Node with ID {$id} points to non-existent parent with ID {$pid}");
+                    }
+
+                    $nodes[$this->rootId]->addChild($nodes[$id]);
                 }
             }
         }
@@ -116,12 +126,31 @@ class TreeBuilder
      * @param callable|Closure|null $beforeEach
      * @return TreeBuilder
      */
-    public function setBeforeEach($beforeEach)
+    public function setBeforeEach($beforeEach): TreeBuilder
     {
         $this->beforeEach = $beforeEach;
         return $this;
     }
 
+    /**
+     * 允许父级字段不存在
+     * @return $this
+     */
+    public function allowParentKeyNotExist():TreeBuilder
+    {
+        $this->isAllowParentKeyNotExist = true;
+        return $this;
+    }
+
+    /**
+     * 不允许父级字段不存在
+     * @return $this
+     */
+    public function notAllowParentKeyNotExist():TreeBuilder
+    {
+        $this->isAllowParentKeyNotExist = false;
+        return $this;
+    }
 
     /**
      * @param AbstractAdapter|null $dataAdapter
